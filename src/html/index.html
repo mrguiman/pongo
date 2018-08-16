@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type="text/javascript" src="/static/index.js"></script>
+        <script type="text/javascript" src="/static/websocket.js"></script>
+        <script type="text/javascript" src="/static/game.js"></script>
+    </head>
+
+    <body style="background-color: black;">
+        <div id="splash">
+            <input id="name" type="text" style="display:block;" />
+            <button onclick="javascript:window.app.init()">Start Playing!</button>
+        </div>
+        <div id="game" style="display: none;position: relative; height: 100%;">
+            <div id="paddle1" style="background-color: white;display: inline-block; width:10px; height: 60px; position: absolute; left: 20px; top: 10px;"></div>
+            <div id="paddle2" style="background-color: white;display: inline-block; width:10px; height: 60px; position:absolute; right: 20px; top: 10px;"></div>
+            <div id="ball" style="position: absolute; width:10px; height: 10px; background-color:white; top: 145px; left: 145px;"></div>
+        </div>
+    </body>
+</html>
+

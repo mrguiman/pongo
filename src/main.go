@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var upgrader = websocket.Upgrader{
@@ -32,6 +34,7 @@ func main() {
 
 	go app.game.startGameLoop()
 
+	mux.HandleFunc("/static/", app.static)
 	mux.HandleFunc("/", app.index)
 	mux.HandleFunc("/websocket", app.ServeWebSocket)
 
@@ -43,7 +46,12 @@ func (a *app) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *app) index(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "html/index.html")
+	http.ServeFile(w, r, "src/html/index.html")
+}
+
+func (a *app) static(w http.ResponseWriter, r *http.Request) {
+	splitPath := strings.Split(r.URL.Path, "/")
+	http.ServeFile(w, r, fmt.Sprintf("src/js/%s", splitPath[len(splitPath)-1]))
 }
 
 func (a *app) ServeWebSocket(w http.ResponseWriter, r *http.Request) {
