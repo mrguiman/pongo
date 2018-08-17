@@ -16,11 +16,11 @@ class Connection {
 
             switch(data.Type) {
                 case "SET":
-                    fireEvent("gameinit", document, data.Game);
+                    fireEvent("preparegame", document, data.Game);
                     ws.send("start")
                     break;
                 case "UPDATE":
-                    fireEvent("gameupdate", document, data.Game);
+                    fireEvent("updategame", document, data.Game);
                     break;
             }
         };
