@@ -47,7 +47,7 @@ func (c *client) readPump(a *app) {
 		}
 
 		switch string(p) {
-		case "ready":
+		case "READY":
 			var player *Player = a.game.RegisterPlayer()
 			data, err := json.Marshal(GameInitMessage{"INIT", a.game, *player})
 			if err != nil {
@@ -55,7 +55,7 @@ func (c *client) readPump(a *app) {
 			}
 
 			err = c.write(websocket.TextMessage, data)
-		case "start":
+		case "START":
 			a.game.Running = true
 			err = c.writeMessage(Message{"GO", *a.game})
 			break

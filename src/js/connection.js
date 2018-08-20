@@ -7,8 +7,8 @@ class Connection {
 
         ws.onopen = () => {
             // Give window responsability for pinging the server to keep the connection alive
-            window.setInterval(() => { ws.send("ping") }, 1000)
-            ws.send("ready");
+            window.setInterval(() => { ws.send("PING") }, 1000)
+            ws.send("READY");
         };
 
         ws.onmessage = (evt) => {
@@ -17,7 +17,7 @@ class Connection {
             switch(data.Type) {
                 case "INIT":
                     fireEvent("preparegame", document, data.Game);
-                    ws.send("start")
+                    ws.send("START")
                     break;
                 case "UPDATE":
                     fireEvent("updategame", document, data.Game);
