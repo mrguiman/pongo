@@ -31,8 +31,8 @@ type Ball struct {
 }
 
 type Position struct {
-	Top  int
-	Left int
+	X int
+	Y int
 }
 
 func NewGame() Game {
@@ -57,12 +57,12 @@ func NewGame() Game {
 }
 
 func (g *Game) Update() {
-	if g.Ball.Pos.Left >= g.Width-30 {
+	if g.Ball.Pos.X >= g.Width-30 {
 		g.Ball.Direction = -1
-	} else if g.Ball.Pos.Left <= 30 {
+	} else if g.Ball.Pos.X <= 30 {
 		g.Ball.Direction = 1
 	}
-	g.Ball.Pos.Left += (5 * g.Ball.Direction)
+	g.Ball.Pos.X += (5 * g.Ball.Direction)
 }
 
 func (g *Game) startGameLoop() {
@@ -75,19 +75,19 @@ func (g *Game) startGameLoop() {
 }
 
 func (g *Game) RegisterPlayer() *Player {
-	var playerID, initialLeft int
+	var playerID, initialX int
 	if len(g.players) == 1 {
 		playerID = 2
-		initialLeft = g.Width - (PLAYER_WIDTH * 2)
+		initialX = g.Width - (PLAYER_WIDTH * 2)
 	} else {
 		playerID = 1
 		// Position first player to the left
-		initialLeft = PLAYER_WIDTH
+		initialX = PLAYER_WIDTH
 	}
 
-	initialTop := (g.Height / 2) - (PLAYER_HEIGHT / 2)
+	initialY := (g.Height / 2) - (PLAYER_HEIGHT / 2)
 
-	newPlayer := Player{playerID, PLAYER_WIDTH, PLAYER_HEIGHT, Position{initialTop, initialLeft}}
+	newPlayer := Player{playerID, PLAYER_WIDTH, PLAYER_HEIGHT, Position{initialX, initialY}}
 	g.players = append(g.players, newPlayer)
 	return &newPlayer
 }

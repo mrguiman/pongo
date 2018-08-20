@@ -26,7 +26,7 @@ class Game {
     }
 
     repaint(data) {
-        this._ui.ball.style.left = data.Ball.Pos.Left + "px";
-        this._ui.ball.style.top = data.Ball.Pos.Top + "px";
+        this._ui.ball.style.left = data.Ball.Pos.X + "px";
+        this._ui.ball.style.top = data.Ball.Pos.Y + "px";
     }
 }
