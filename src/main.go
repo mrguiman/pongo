@@ -56,7 +56,7 @@ func (a *app) ServeWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Keep track of the new client inside the app
-	c := client{ws}
+	c := client{ws, 0}
 	a.clients = append(a.clients, &c)
 
 	// Write loop inside a different goroutine

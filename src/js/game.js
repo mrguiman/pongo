@@ -6,8 +6,8 @@ class Game {
             container: document.getElementById("game"),
             ball: document.getElementById("ball"),
             players: {
-                1: null,
-                2: null
+                1: document.getElementById("player" + 1),
+                2: document.getElementById("player" + 2)
             }
         }
 
@@ -16,14 +16,20 @@ class Game {
         });
 
         document.addEventListener("onInit", (e) => {
-            this._ui.players[e.data.MyPlayer.ID] = document.getElementById("player" + e.data.MyPlayer.ID);
+            this.myPlayerID = e.data.MyPlayerID;
+            this.opponentID = this.myPlayerID == 1 ? 2 : 1;
+
             this.paintBoard(e.data.Game.Width, e.data.Game.Height);
             this.paintBall(e.data.Game.Ball);
-            this.paintPlayer(e.data.MyPlayer);
+            this.paintPlayer(e.data.Game.Players[this.myPlayerID - 1]);
         });
 
         document.addEventListener("updategame", (e) => {
+            console.log(e.data);
             this.paintBall(e.data.Ball);
+
+            let opponent = e.data.Players[this.opponentID - 1];
+            opponent && this.paintPlayer(opponent);
         });
     }
 

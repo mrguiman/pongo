@@ -11,18 +11,19 @@ const GAME_UPDATE_PERDIOD time.Duration = 200 * time.Millisecond
 const WRITE_WAIT time.Duration = 500 * time.Millisecond
 
 type client struct {
-	ws *websocket.Conn
+	ws       *websocket.Conn
+	playerID int
 }
 
 type GameInitMessage struct {
-	Type     string
-	Game     *Game
-	MyPlayer Player
+	Type       string
+	Game       *Game
+	MyPlayerID int
 }
 
-type Message struct {
+type GameUpdateMessage struct {
 	Type string
-	Game Game
+	Game *Game
 }
 
 func (c *client) readPump(a *app) {
@@ -48,8 +49,14 @@ func (c *client) readPump(a *app) {
 
 		switch string(p) {
 		case "READY":
-			var player *Player = a.game.RegisterPlayer()
-			data, err := json.Marshal(GameInitMessage{"INIT", a.game, *player})
+			c.playerID, err = a.game.RegisterPlayer()
+			if err != nil {
+				a.log.Println(err)
+				c.write(websocket.CloseMessage, []byte(err.Error()))
+				continue
+			}
+
+			data, err := json.Marshal(GameInitMessage{"INIT", a.game, c.playerID})
 			if err != nil {
 				a.log.Println(err)
 			}
@@ -78,7 +85,12 @@ func (c *client) writePump(a *app) {
 	for {
 		select {
 		case <-gameTicker.C:
-			if err := c.writeMessage(Message{"UPDATE", *a.game}); err != nil {
+			data, err := json.Marshal(GameUpdateMessage{"UPDATE", a.game})
+			if err != nil {
+				a.log.Println(err)
+			}
+
+			if err := c.write(websocket.TextMessage, data); err != nil {
 				a.log.Println("Error sending Update: ", err)
 			}
 		case <-pingTicker.C:
@@ -93,18 +105,4 @@ func (c *client) writePump(a *app) {
 func (c *client) write(mt int, message []byte) error {
 	c.ws.SetWriteDeadline(time.Now().Add(WRITE_WAIT))
 	return c.ws.WriteMessage(mt, message)
-}
-
-func (c *client) writeMessage(message Message) error {
-	c.ws.SetWriteDeadline(time.Now().Add(1 * time.Second))
-	data, err := json.Marshal(message)
-	if err != nil {
-		return err
-	}
-	err = c.ws.WriteMessage(websocket.TextMessage, data)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -24,8 +24,8 @@ class Connection {
             }
         };
 
-        ws.onclose = () => {
-            console.log("Connection closed");
+        ws.onclose = (evt) => {
+            console.log("Connection closed: " + evt.reason);
         };
 
         return ws

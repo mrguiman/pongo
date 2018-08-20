@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type Game struct {
 	Ball     Ball
 	TickTime int
 	Running  bool
-	players  []Player
+	Players  []Player
 }
 
 type Player struct {
@@ -74,9 +75,13 @@ func (g *Game) startGameLoop() {
 	}
 }
 
-func (g *Game) RegisterPlayer() *Player {
+func (g *Game) RegisterPlayer() (int, error) {
+	if len(g.Players) >= 2 {
+		return 0, errors.New("There's already enough players connected")
+	}
+
 	var playerID, initialX int
-	if len(g.players) == 1 {
+	if len(g.Players) == 1 {
 		playerID = 2
 		initialX = g.Width - (PLAYER_WIDTH * 2)
 	} else {
@@ -88,6 +93,6 @@ func (g *Game) RegisterPlayer() *Player {
 	initialY := (g.Height / 2) - (PLAYER_HEIGHT / 2)
 
 	newPlayer := Player{playerID, PLAYER_WIDTH, PLAYER_HEIGHT, Position{initialX, initialY}}
-	g.players = append(g.players, newPlayer)
-	return &newPlayer
+	g.Players = append(g.Players, newPlayer)
+	return newPlayer.ID, nil
 }
