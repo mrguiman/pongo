@@ -16,7 +16,7 @@ class Connection {
 
             switch(data.Type) {
                 case "INIT":
-                    fireEvent("preparegame", document, data.Game);
+                    fireEvent("onInit", document, data);
                     ws.send("START")
                     break;
                 case "UPDATE":

@@ -17,7 +17,7 @@ type Game struct {
 }
 
 type Player struct {
-	id     int
+	ID     int
 	Width  int
 	Height int
 	Pos    Position

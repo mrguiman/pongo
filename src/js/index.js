@@ -12,11 +12,11 @@ window.app = {
         new Connection();
         new Game();
 
-        document.addEventListener("requeststart", () => { 
+        document.addEventListener("onReady", () => {
             this._ui.splash.style.display = "none";
         })
 
-        fireEvent("requeststart", document);
+        fireEvent("onReady", document);
     }
 }
 
