@@ -55,10 +55,6 @@ func (c *client) readPump(a *app) {
 			}
 
 			err = c.write(websocket.TextMessage, data)
-		case "START":
-			a.game.Running = true
-			err = c.writeMessage(Message{"GO", *a.game})
-			break
 		}
 
 		if err != nil {
