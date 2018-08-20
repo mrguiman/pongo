@@ -15,7 +15,7 @@ class Connection {
             let data = JSON.parse(evt.data)
 
             switch(data.Type) {
-                case "SET":
+                case "INIT":
                     fireEvent("preparegame", document, data.Game);
                     ws.send("start")
                     break;

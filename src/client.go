@@ -14,6 +14,17 @@ type client struct {
 	ws *websocket.Conn
 }
 
+type GameInitMessage struct {
+	Type     string
+	Game     *Game
+	MyPlayer Player
+}
+
+type Message struct {
+	Type string
+	Game Game
+}
+
 func (c *client) readPump(a *app) {
 	defer func() {
 		a.log.Println("Closing a connection")
@@ -37,7 +48,13 @@ func (c *client) readPump(a *app) {
 
 		switch string(p) {
 		case "ready":
-			err = c.writeMessage(Message{"SET", *a.game})
+			var player *Player = a.game.RegisterPlayer()
+			data, err := json.Marshal(GameInitMessage{"INIT", a.game, *player})
+			if err != nil {
+				a.log.Println(err)
+			}
+
+			err = c.write(websocket.TextMessage, data)
 		case "start":
 			a.game.Running = true
 			err = c.writeMessage(Message{"GO", *a.game})

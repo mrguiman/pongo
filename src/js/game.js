@@ -29,5 +29,4 @@ class Game {
         this._ui.ball.style.left = data.Ball.Pos.Left + "px";
         this._ui.ball.style.top = data.Ball.Pos.Top + "px";
     }
-
 }

@@ -4,12 +4,23 @@ import (
 	"time"
 )
 
+const PLAYER_WIDTH int = 10
+const PLAYER_HEIGHT int = 60
+
 type Game struct {
 	Width    int
 	Height   int
 	Ball     Ball
 	TickTime int
 	Running  bool
+	players  []Player
+}
+
+type Player struct {
+	id     int
+	Width  int
+	Height int
+	Pos    Position
 }
 
 type Ball struct {
@@ -39,6 +50,7 @@ func NewGame() Game {
 		},
 		100,
 		false,
+		[]Player{},
 	}
 
 	return g
@@ -60,4 +72,22 @@ func (g *Game) startGameLoop() {
 			g.Update()
 		}
 	}
+}
+
+func (g *Game) RegisterPlayer() *Player {
+	var playerID, initialLeft int
+	if len(g.players) == 1 {
+		playerID = 2
+		initialLeft = g.Width - (PLAYER_WIDTH * 2)
+	} else {
+		playerID = 1
+		// Position first player to the left
+		initialLeft = PLAYER_WIDTH
+	}
+
+	initialTop := (g.Height / 2) - (PLAYER_HEIGHT / 2)
+
+	newPlayer := Player{playerID, PLAYER_WIDTH, PLAYER_HEIGHT, Position{initialTop, initialLeft}}
+	g.players = append(g.players, newPlayer)
+	return &newPlayer
 }

@@ -21,11 +21,6 @@ type app struct {
 	game    *Game
 }
 
-type Message struct {
-	Type string
-	Game Game
-}
-
 func main() {
 	mux := http.NewServeMux()
 	log := log.New(os.Stdout, "web ", log.LstdFlags)
