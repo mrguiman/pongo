@@ -7,7 +7,7 @@ import (
 )
 
 const PING_PERIOD time.Duration = 1 * time.Second
-const GAME_UPDATE_PERDIOD time.Duration = 200 * time.Millisecond
+const GAME_UPDATE_PERDIOD time.Duration = 100 * time.Millisecond
 const WRITE_WAIT time.Duration = 500 * time.Millisecond
 
 type client struct {

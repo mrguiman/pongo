@@ -29,7 +29,6 @@ class Game {
         });
 
         document.addEventListener("updategame", (e) => {
-            console.log(e.data);
             this.paintBall(e.data.Ball);
 
             let opponent = e.data.Players[this.opponentID];
