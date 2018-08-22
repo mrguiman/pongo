@@ -17,7 +17,7 @@ var upgrader = websocket.Upgrader{
 type app struct {
 	mux     *http.ServeMux
 	log     *log.Logger
-	clients []*client
+	clients map[*client]bool
 	game    *Game
 }
 
@@ -25,7 +25,7 @@ func main() {
 	mux := http.NewServeMux()
 	log := log.New(os.Stdout, "web ", log.LstdFlags)
 	game := NewGame()
-	app := &app{mux, log, nil, &game}
+	app := &app{mux, log, make(map[*client]bool), &game}
 
 	go app.game.startGameLoop()
 
@@ -57,12 +57,15 @@ func (a *app) ServeWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	// Keep track of the new client inside the app
 	c := client{ws, 0}
-	a.clients = append(a.clients, &c)
+	a.clients[&c] = true
 
 	// Write loop inside a different goroutine
 	go c.writePump(a)
 	// Read loop inside this thread
 	c.readPump(a)
+}
 
-	// TODO remove client from list on socket close
+func (a *app) Unregister(c *client) {
+	a.game.UnregisterPlayer(c.playerID)
+	delete(a.clients, c)
 }

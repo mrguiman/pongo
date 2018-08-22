@@ -26,9 +26,18 @@ type GameUpdateMessage struct {
 	Game *Game
 }
 
+type EventMessage struct {
+	Type string
+}
+type PositionEventMessage struct {
+	Type string
+	Y    int
+}
+
 func (c *client) readPump(a *app) {
 	defer func() {
 		a.log.Println("Closing a connection")
+		a.Unregister(c)
 		c.ws.Close()
 	}()
 
@@ -46,8 +55,10 @@ func (c *client) readPump(a *app) {
 			a.log.Println(err)
 			break
 		}
+		inputData := EventMessage{}
+		err = json.Unmarshal(p, &inputData)
 
-		switch string(p) {
+		switch string(inputData.Type) {
 		case "READY":
 			c.playerID, err = a.game.RegisterPlayer()
 			if err != nil {
@@ -62,6 +73,10 @@ func (c *client) readPump(a *app) {
 			}
 
 			err = c.write(websocket.TextMessage, data)
+		case "UPDATEPOSITION":
+			inputData := PositionEventMessage{}
+			err = json.Unmarshal(p, &inputData)
+			a.game.UpdatePlayerPosition(c.playerID, inputData.Y)
 		}
 
 		if err != nil {
@@ -79,6 +94,7 @@ func (c *client) writePump(a *app) {
 	defer func() {
 		gameTicker.Stop()
 		pingTicker.Stop()
+		a.Unregister(c)
 		c.ws.Close()
 	}()
 

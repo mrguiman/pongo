@@ -14,7 +14,7 @@ type Game struct {
 	Ball     Ball
 	TickTime int
 	Running  bool
-	Players  []Player
+	Players  map[int]Player
 }
 
 type Player struct {
@@ -51,7 +51,7 @@ func NewGame() Game {
 		},
 		100,
 		false,
-		[]Player{},
+		make(map[int]Player),
 	}
 
 	return g
@@ -69,6 +69,10 @@ func (g *Game) Update() {
 func (g *Game) startGameLoop() {
 	ticker := time.NewTicker(time.Duration(g.TickTime) * time.Millisecond)
 	for range ticker.C {
+		if len(g.Players) == 2 && !g.Running {
+			g.Running = true
+		}
+
 		if g.Running {
 			g.Update()
 		}
@@ -93,6 +97,16 @@ func (g *Game) RegisterPlayer() (int, error) {
 	initialY := (g.Height / 2) - (PLAYER_HEIGHT / 2)
 
 	newPlayer := Player{playerID, PLAYER_WIDTH, PLAYER_HEIGHT, Position{initialX, initialY}}
-	g.Players = append(g.Players, newPlayer)
+	g.Players[playerID] = newPlayer
 	return newPlayer.ID, nil
+}
+
+func (g *Game) UnregisterPlayer(playerID int) {
+	delete(g.Players, playerID)
+}
+
+func (g *Game) UpdatePlayerPosition(playerID int, newY int) {
+	player := g.Players[playerID]
+	player.Pos.Y = newY
+	g.Players[playerID] = player
 }

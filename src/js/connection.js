@@ -7,8 +7,8 @@ class Connection {
 
         ws.onopen = () => {
             // Give window responsability for pinging the server to keep the connection alive
-            window.setInterval(() => { ws.send("PING") }, 1000)
-            ws.send("READY");
+            window.setInterval(() => { ws.send(JSON.stringify({Type:"PING"})) }, 1000)
+            ws.send(JSON.stringify({Type: "READY"}));
         };
 
         ws.onmessage = (evt) => {
@@ -28,6 +28,9 @@ class Connection {
             console.log("Connection closed: " + evt.reason);
         };
 
+        document.addEventListener("onPlayerMove", (e) => {
+            ws.send(JSON.stringify({Type: "UPDATEPOSITION", Y: e.data}));
+        });
         return ws
     }
 }
